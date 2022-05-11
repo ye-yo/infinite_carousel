@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-function SlideItem({ item }) {
+function SlideItem({ item, isCenter }) {
   return (
-    <Item>
+    <Item isCenter={isCenter}>
       <Link href="/">
         <Image background={item.background}>{item.id}</Image>
       </Link>
@@ -17,6 +17,7 @@ const Item = styled.li`
   height: 100%;
   list-style: none;
   flex: 0 0 100%;
+  opacity: ${({ isCenter }) => (isCenter ? 1 : 0.6)};
 `;
 
 const Link = styled.a`
@@ -24,6 +25,7 @@ const Link = styled.a`
   cursor: pointer;
   width: 100%;
   height: 100%;
+  text-decoration: none;
 `;
 
 const Image = styled.div`
