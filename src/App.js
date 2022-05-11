@@ -1,5 +1,5 @@
 import Slider from './components/Slider';
-import { colors } from './sample';
+import colors from './sample';
 
 function App() {
   return (

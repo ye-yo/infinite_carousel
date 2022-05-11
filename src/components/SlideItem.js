@@ -3,7 +3,7 @@ import styled from 'styled-components';
 function SlideItem({ item }) {
   return (
     <Item>
-      <Link>
+      <Link href="/">
         <Image background={item.background}>{item.id}</Image>
       </Link>
     </Item>

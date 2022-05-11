@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
-import SlideItem from './SlideItem';
 import { IoIosArrowDropleftCircle } from 'react-icons/io';
+import SlideItem from './SlideItem';
 
 function Slider({ slides }) {
   return (
@@ -10,8 +10,8 @@ function Slider({ slides }) {
           <SlideItem key={item.id} item={item} />
         ))}
       </SlideTrack>
-      <Button direction="left" />
-      <Button direction="right" />
+      <Button direction="prev" />
+      <Button direction="next" />
     </SliderArea>
   );
 }
@@ -22,6 +22,7 @@ const SliderArea = styled.div`
   position: relative;
   overflow: hidden;
 `;
+
 const SlideTrack = styled.ul`
   display: flex;
   width: 100%;
@@ -38,7 +39,7 @@ const Button = styled(IoIosArrowDropleftCircle)`
   color: #eeeeee88;
   cursor: pointer;
   ${({ direction }) => css`
-    transform: translate(0%, -50%) rotate(${direction === 'right' ? 180 : 0}deg);
-    ${direction === 'right' ? 'right' : 'left'} : 10px;
+    transform: translate(0%, -50%) rotate(${direction === 'next' ? 180 : 0}deg);
+    ${direction === 'next' ? 'right' : 'left'} : 10px;
   `};
 `;
