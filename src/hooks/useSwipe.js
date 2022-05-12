@@ -1,11 +1,14 @@
 import { useState, useRef } from 'react';
+import useInterval from './useInterval';
 
 const swipeOffset = 100;
+const speed = 2000;
 
 export default function useSwipe(slides, options) {
   const { transitionTime } = options;
   const [currentIndex, setCurrentIndex] = useState(0);
   const isSwiping = useRef(false);
+  const [isMouseOver, setIsMouseOver] = useState(false);
   const [slideX, setSlideX] = useState(0);
   const trackClass = useRef();
   const startX = useRef(0);
@@ -58,12 +61,16 @@ export default function useSwipe(slides, options) {
     }
   };
 
+  useInterval(() => swipeSlide('next'), isMouseOver ? null : speed);
+
   return {
     currentIndex,
     trackClass,
     slideX,
     handleSlideButtonClick,
     swipeEvents: {
+      onMouseOver: () => setIsMouseOver(true),
+      onMouseOut: () => setIsMouseOver(false),
       onMouseDown: handleSwipeStart,
       onTouchStart: handleSwipeStart,
       onTouchMove: handleSwipe,
