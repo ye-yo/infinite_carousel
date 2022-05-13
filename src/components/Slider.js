@@ -4,12 +4,17 @@ import { IoIosArrowDropleftCircle } from 'react-icons/io';
 import SlideItem from './SlideItem';
 import setInfiniteSlide from '../utils';
 import useSwipe from '../hooks/useSwipe';
+import defaultOptions from '../constants';
+import useSlideOptions from '../hooks/useSlideOptions';
 
 const transitionTime = 0.5;
-const slideToAdd = 1;
 
-function Slider({ slides }) {
-  const items = useMemo(() => setInfiniteSlide(slides, slideToAdd), [slides]);
+function Slider({ slides, customOptions }) {
+  const options = useSlideOptions(defaultOptions, customOptions);
+  const items = useMemo(
+    () => setInfiniteSlide(slides, options.slideToAdd),
+    [slides, options],
+  );
   const {
     currentIndex,
     trackClass,
@@ -18,13 +23,22 @@ function Slider({ slides }) {
     handleSlideButtonClick,
   } = useSwipe(slides, { transitionTime });
 
+  const scrollRatio = useMemo(() => {
+    const one = 100 / options.slideToShow;
+    if (options.centerMode && options.slideToShow % 2 === 1) {
+      return -one * (currentIndex + 1);
+    }
+    return -one * (currentIndex + options.slideToAdd);
+  }, [currentIndex, options]);
+
   return (
     <SliderArea>
       <SlideTrack
         className={trackClass.current}
-        currentIndex={currentIndex}
         slideX={slideX}
         {...swipeEvents}
+        options={options}
+        scrollRatio={scrollRatio}
       >
         {items.map((item, index) => (
           <SlideItem
@@ -54,10 +68,14 @@ const SlideTrack = styled.ul`
   height: 400px;
   padding: 0;
   margin: 0;
-  transform: ${({ currentIndex, slideX }) =>
-    `translateX(calc(${-100 * (slideToAdd + currentIndex)}% + ${slideX}px))`};
+  transform: ${({ scrollRatio, slideX }) =>
+    `translateX(calc(${scrollRatio}% + ${slideX}px))`};
   &:not(.no-effect) {
     transition: transform ${transitionTime}s;
+  }
+
+  > li {
+    flex: 0 0 ${({ options }) => options.slideWidthRatio}%;
   }
 `;
 
