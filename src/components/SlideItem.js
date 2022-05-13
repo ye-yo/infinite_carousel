@@ -1,10 +1,18 @@
 import styled from 'styled-components';
 
-function SlideItem({ item, isCenter }) {
+function SlideItem({ item, isCurrent }) {
   return (
-    <Item isCenter={isCenter}>
+    <Item
+      isCurrent={isCurrent}
+      className={
+        (isCurrent ? 'current' : '') +
+        (item.originId !== undefined ? 'clone-slide' : '')
+      }
+    >
       <Link href="/">
-        <Image background={item.background}>{item.id}</Image>
+        <Image background={item.background}>
+          {item.originId !== undefined ? item.originId : item.id}
+        </Image>
       </Link>
     </Item>
   );
@@ -17,7 +25,7 @@ const Item = styled.li`
   height: 100%;
   list-style: none;
   flex: 0 0 100%;
-  opacity: ${({ isCenter }) => (isCenter ? 1 : 0.6)};
+  opacity: ${({ isCurrent }) => (isCurrent ? 1 : 0.6)};
 `;
 
 const Link = styled.a`
@@ -36,6 +44,5 @@ const Image = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 60px;
   color: white;
 `;

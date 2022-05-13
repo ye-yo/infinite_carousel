@@ -5,26 +5,31 @@ const swipeOffset = 100;
 const speed = 2000;
 
 export default function useSwipe(slides, options) {
-  const { transitionTime } = options;
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const { transitionTime, startIndex, slideToScroll, slideToAdd } = options;
+  const [currentIndex, setCurrentIndex] = useState(startIndex + slideToAdd);
   const isSwiping = useRef(false);
-  const [isMouseOver, setIsMouseOver] = useState(false);
+  const [isMouseOver, setIsMouseOver] = useState(!options.autoSlide);
   const [slideX, setSlideX] = useState(0);
   const trackClass = useRef();
   const startX = useRef(0);
 
   const swipeSlide = direction => {
-    const next = currentIndex + (direction === 'next' ? 1 : -1);
+    const next =
+      currentIndex + (direction === 'next' ? slideToScroll : -slideToScroll);
     setCurrentIndex(next);
-    if (next >= 0 && next < slides.length) return;
+    const first = slideToAdd;
+    const last = slides.length + slideToAdd;
+    if (next >= first && next < last) return;
     setTimeout(() => {
       trackClass.current = 'no-effect';
-      setCurrentIndex(next <= -1 ? slides.length - 1 : 0);
+      setCurrentIndex(next <= first ? last - 1 : first);
       setTimeout(() => {
         trackClass.current = '';
       }, 0);
     }, transitionTime * 1000);
   };
+
+  useInterval(() => swipeSlide('next'), isMouseOver ? null : speed);
 
   const handleSlideButtonClick = e => {
     const direction = e.currentTarget.getAttribute('direction');
@@ -61,16 +66,14 @@ export default function useSwipe(slides, options) {
     }
   };
 
-  useInterval(() => swipeSlide('next'), isMouseOver ? null : speed);
-
   return {
     currentIndex,
     trackClass,
     slideX,
     handleSlideButtonClick,
     swipeEvents: {
-      onMouseOver: () => setIsMouseOver(true),
-      onMouseOut: () => setIsMouseOver(false),
+      onMouseOver: () => options.autoSlide && setIsMouseOver(true),
+      onMouseOut: () => options.autoSlide && setIsMouseOver(false),
       onMouseDown: handleSwipeStart,
       onTouchStart: handleSwipeStart,
       onTouchMove: handleSwipe,

@@ -4,34 +4,43 @@ import { IoIosArrowDropleftCircle } from 'react-icons/io';
 import SlideItem from './SlideItem';
 import setInfiniteSlide from '../utils';
 import useSwipe from '../hooks/useSwipe';
+import defaultOptions from '../constants';
+import useSlideOptions from '../hooks/useSlideOptions';
 
 const transitionTime = 0.5;
-const slideToAdd = 1;
 
-function Slider({ slides }) {
-  const items = useMemo(() => setInfiniteSlide(slides, slideToAdd), [slides]);
+function Slider({ slides, customOptions }) {
+  const options = useSlideOptions(defaultOptions, customOptions);
+  const items = useMemo(
+    () => setInfiniteSlide(slides, options.slideToAdd),
+    [slides, options],
+  );
   const {
     currentIndex,
     trackClass,
     slideX,
     swipeEvents,
     handleSlideButtonClick,
-  } = useSwipe(slides, { transitionTime });
+  } = useSwipe(slides, {
+    transitionTime,
+    ...options,
+  });
 
   return (
     <SliderArea>
       <SlideTrack
         className={trackClass.current}
-        currentIndex={currentIndex}
         slideX={slideX}
         {...swipeEvents}
+        {...options}
+        currentIndex={currentIndex}
       >
         {items.map((item, index) => (
           <SlideItem
             key={item.id}
             item={item}
             index={index}
-            isCenter={currentIndex === item.id}
+            isCurrent={currentIndex === index}
           />
         ))}
       </SlideTrack>
@@ -54,10 +63,29 @@ const SlideTrack = styled.ul`
   height: 400px;
   padding: 0;
   margin: 0;
-  transform: ${({ currentIndex, slideX }) =>
-    `translateX(calc(${-100 * (slideToAdd + currentIndex)}% + ${slideX}px))`};
+  transform: ${({
+    slideItemWidth,
+    slideMargin,
+    slideX,
+    previewRatio,
+    currentIndex,
+    slideToShow,
+  }) =>
+    `translateX(calc((${slideItemWidth} + ${slideMargin}px) * ${
+      currentIndex - (slideToShow - 1) / 2
+    } * -1 - ${
+      1 - (previewRatio || 1)
+    } * (${slideItemWidth}) +  ${slideX}px))`};
+
   &:not(.no-effect) {
     transition: transform ${transitionTime}s;
+  }
+
+  gap: ${({ slideMargin, slideToShow }) =>
+    slideToShow > 1 ? slideMargin : 0}px;
+
+  > li {
+    flex: 0 0 ${({ slideItemWidth }) => `calc(${slideItemWidth})`};
   }
 `;
 
