@@ -7,14 +7,14 @@ import useSwipe from '../hooks/useSwipe';
 import defaultOptions from '../constants';
 import useSlideOptions from '../hooks/useSlideOptions';
 
-const transitionTime = 0.5;
-
 function Slider({ slides, customOptions }) {
   const options = useSlideOptions(defaultOptions, customOptions);
   const items = useMemo(
-    () => setInfiniteSlide(slides, options.slideToAdd),
+    () =>
+      options.infinite ? setInfiniteSlide(slides, options.slideToAdd) : slides,
     [slides, options],
   );
+
   const {
     currentIndex,
     trackClass,
@@ -22,7 +22,6 @@ function Slider({ slides, customOptions }) {
     swipeEvents,
     handleSlideButtonClick,
   } = useSwipe(slides, {
-    transitionTime,
     ...options,
   });
 
@@ -41,6 +40,8 @@ function Slider({ slides, customOptions }) {
             item={item}
             index={index}
             isCurrent={currentIndex === index}
+            opacity={options.opacity}
+            imageFit={options.imageFit}
           />
         ))}
       </SlideTrack>
@@ -78,7 +79,7 @@ const SlideTrack = styled.ul`
     } * (${slideItemWidth}) +  ${slideX}px))`};
 
   &:not(.no-effect) {
-    transition: transform ${transitionTime}s;
+    transition: transform ${({ transitionSpeed }) => transitionSpeed}ms;
   }
 
   gap: ${({ slideMargin, slideToShow }) =>

@@ -12,12 +12,19 @@ export default function useSlideOptions(defaultOptions, customOptions) {
     return newOptions;
   }, [customOptions, defaultOptions]);
 
-  const { slideToShow, slideToScroll, slideMargin, previewRatio, previewMode } =
-    options;
+  const {
+    slideToShow,
+    slideToScroll,
+    slideMargin,
+    previewRatio,
+    previewMode,
+    infinite,
+  } = options;
 
   const slideToAdd = useMemo(
-    () => Math.floor(slideToShow / 2) + 1 + (slideToScroll - 1) || 0,
-    [slideToScroll, slideToShow],
+    () =>
+      infinite ? Math.floor(slideToShow / 2) + 1 + (slideToScroll - 1) || 0 : 0,
+    [slideToScroll, slideToShow, infinite],
   );
 
   const slideWidthRatio = useMemo(() => {

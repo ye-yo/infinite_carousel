@@ -1,19 +1,18 @@
 import styled from 'styled-components';
 
-function SlideItem({ item, isCurrent }) {
+function SlideItem({ item, isCurrent, opacity, imageFit }) {
+  const image = <img src={item.src} alt={`slide-${item.id}`} />;
   return (
     <Item
       isCurrent={isCurrent}
+      opacity={opacity}
+      imageFit={imageFit}
       className={
         (isCurrent ? 'current' : '') +
         (item.originId !== undefined ? 'clone-slide' : '')
       }
     >
-      <Link href="/">
-        <Image background={item.background}>
-          {item.originId !== undefined ? item.originId : item.id}
-        </Image>
-      </Link>
+      {item.url ? <a href={item.url}>{image}</a> : image}
     </Item>
   );
 }
@@ -25,24 +24,20 @@ const Item = styled.li`
   height: 100%;
   list-style: none;
   flex: 0 0 100%;
-  opacity: ${({ isCurrent }) => (isCurrent ? 1 : 0.6)};
-`;
-
-const Link = styled.a`
-  display: block;
-  cursor: pointer;
-  width: 100%;
-  height: 100%;
-  text-decoration: none;
-`;
-
-const Image = styled.div`
-  background: ${props => props.background};
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
+  opacity: ${({ opacity }) => opacity};
+  &.current {
+    opacity: 1;
+  }
+  > a {
+    display: block;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+  }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: ${({ imageFit }) => imageFit};
+  }
 `;

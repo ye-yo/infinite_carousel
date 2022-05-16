@@ -2,10 +2,16 @@ import { useState, useRef } from 'react';
 import useInterval from './useInterval';
 
 const swipeOffset = 100;
-const speed = 2000;
 
 export default function useSwipe(slides, options) {
-  const { transitionTime, startIndex, slideToScroll, slideToAdd } = options;
+  const {
+    transitionSpeed,
+    startIndex,
+    slideToScroll,
+    slideToAdd,
+    autoSlideSpeed,
+    infinite,
+  } = options;
   const [currentIndex, setCurrentIndex] = useState(startIndex + slideToAdd);
   const isSwiping = useRef(false);
   const [isMouseOver, setIsMouseOver] = useState(!options.autoSlide);
@@ -16,20 +22,24 @@ export default function useSwipe(slides, options) {
   const swipeSlide = direction => {
     const next =
       currentIndex + (direction === 'next' ? slideToScroll : -slideToScroll);
-    setCurrentIndex(next);
     const first = slideToAdd;
     const last = slides.length + slideToAdd;
-    if (next >= first && next < last) return;
+    const checkIndex = next >= first && next < last;
+    if (checkIndex) {
+      setCurrentIndex(next);
+      return;
+    }
+    if (!infinite) return;
     setTimeout(() => {
       trackClass.current = 'no-effect';
       setCurrentIndex(next <= first ? last - 1 : first);
       setTimeout(() => {
         trackClass.current = '';
       }, 0);
-    }, transitionTime * 1000);
+    }, transitionSpeed);
   };
 
-  useInterval(() => swipeSlide('next'), isMouseOver ? null : speed);
+  useInterval(() => swipeSlide('next'), isMouseOver ? null : autoSlideSpeed);
 
   const handleSlideButtonClick = e => {
     const direction = e.currentTarget.getAttribute('direction');
