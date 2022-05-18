@@ -32,6 +32,7 @@ export default function useSwipe(slides, options) {
     }
     if (!infinite) return;
     setCurrentIndex(next);
+
     setTimeout(() => {
       trackClass.current = 'no-effect';
       setCurrentIndex(next <= first ? last - 1 : first);
