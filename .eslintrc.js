@@ -12,6 +12,7 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
+  parser: 'babel-eslint',
   plugins: ['react', 'react-hooks'],
   rules: {
     'react/react-in-jsx-scope': 0,
