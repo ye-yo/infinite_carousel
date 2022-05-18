@@ -25,11 +25,13 @@ export default function useSwipe(slides, options) {
     const first = slideToAdd;
     const last = slides.length + slideToAdd;
     const checkIndex = next >= first && next < last;
+
     if (checkIndex) {
       setCurrentIndex(next);
       return;
     }
     if (!infinite) return;
+    setCurrentIndex(next);
     setTimeout(() => {
       trackClass.current = 'no-effect';
       setCurrentIndex(next <= first ? last - 1 : first);
